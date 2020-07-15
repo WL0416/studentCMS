@@ -6,7 +6,7 @@ const Footer = () => {
       className="page-footer font-small bg-dark"
       style={{ position: "fixed", left: "0", bottom: "0", width: "100%" }}
     >
-      <div className="footer-copyright text-right py-3 text-white">
+      <div className="footer-copyright text-center py-3 text-white">
         Contact{" "}
         <a
           href="https://www.linkedin.com/in/wei-li-439546126"

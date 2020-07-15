@@ -5,8 +5,10 @@ import { firestoreConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { convertDate } from "../util/tools";
-import { offerGenerate } from "../util/tools";
+import { notifyUser } from "../../actions/notifyActions";
+import Alert from "../layout/Alert";
+import download from "js-file-download";
+import axios from "axios";
 
 class AddOffer extends Component {
   state = {
@@ -36,9 +38,10 @@ class AddOffer extends Component {
     tuitionFirst: "",
     totalDue: "",
     template: "",
+    isSaved: false,
   };
 
-  onSubmit = (e) => {
+  onClick = (e) => {
     e.preventDefault();
 
     // const { firestore } = this.props;
@@ -73,15 +76,29 @@ class AddOffer extends Component {
 
     if (parseInt(term) < 4) {
       period2 = balance;
-      period3 = "0";
-      period4 = "0";
+      period3 = "0.00";
+      period4 = "0.00";
     } else {
       const eachTermFee = (parseFloat(tuition) / 4).toFixed(2);
 
       period2 = eachTermFee;
       period3 = eachTermFee;
-      period4 = (parseFloat(tuition) - eachTermFee * 2).toFixed(2);
+      period4 = (
+        parseFloat(tuition) -
+        (eachTermFee * 2 + tuitionFirst)
+      ).toFixed(2);
     }
+
+    let issueDate = new Date();
+    let day = issueDate.getDate();
+    day = day > 10 ? day : "0" + day;
+    let month = issueDate.getMonth() + 1;
+    month = month > 10 ? month : "0" + month;
+    issueDate = day + "/" + month + "/" + issueDate.getFullYear();
+
+    // const birthday = convertDate(this.state.birthday);
+    // const start = convertDate(this.state.start);
+    // const end = convertDate(this.state.end);
 
     this.setState({
       ...this.state,
@@ -89,17 +106,19 @@ class AddOffer extends Component {
       cricos,
       duration,
       term,
-      issueDate: Date.now(),
+      issueDate,
       totalDue,
       totalFee,
       balance,
       campusAddress,
-      birthday: convertDate(this.state.birthday),
-      start: convertDate(this.state.start),
-      end: convertDate(this.state.end),
       period2,
       period3,
       period4,
+      enrolFee: parseFloat(enrolFee).toFixed(2),
+      tuitionFirst: parseFloat(tuitionFirst).toFixed(2),
+      tuition: parseFloat(tuition).toFixed(2),
+      materialsFee: parseFloat(materialsFee).toFixed(2),
+      isSaved: true,
     });
 
     // // parse string of date to the format of firebase accepted.
@@ -112,8 +131,22 @@ class AddOffer extends Component {
     //   .then(() => this.props.history.push("/"));
   };
 
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    axios
+      .post(`http://localhost:3000/offerGenerate`, this.state)
+      .then((response) => {
+        console.log(response.headers);
+        download(response.data, "output.docx");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
   onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value, isSaved: false });
   };
 
   // componentDidUpdate() {
@@ -127,8 +160,14 @@ class AddOffer extends Component {
   //   }
   // }
 
+  alertUser = () => {
+    const { notifyUser } = this.props;
+    notifyUser("Please select a course to generate an offer...", "error");
+  };
+
   render() {
     const { courses } = this.props;
+    const { message, messageType } = this.props.notify;
     return (
       <React.Fragment>
         <div className="row">
@@ -359,22 +398,37 @@ class AddOffer extends Component {
                       className="form-control-file"
                       onChange={this.onChange}
                       value={this.state.template}
-                      required
                     />
                   </div>
                 </div>
                 <br />
                 <input
-                  type="submit"
-                  value="Generate Offer"
-                  className="btn btn-success btn-block col-md-4 offset-md-4"
+                  type="button"
+                  value="Save"
+                  onClick={
+                    this.state.courseName ? this.onClick : this.alertUser
+                  }
+                  className="btn btn-info btn-block col-md-4 offset-md-4"
                 />
+                {this.state.isSaved ? (
+                  <input
+                    type="submit"
+                    value="Generate Offer"
+                    className="btn btn-success btn-block col-md-4 offset-md-4"
+                  />
+                ) : (
+                  <input
+                    type="submit"
+                    value="Generate Offer"
+                    className="btn btn-secondary btn-block col-md-4 offset-md-4"
+                    disabled
+                  />
+                )}
+                <br />
+                {message ? (
+                  <Alert message={message} messageType={messageType} />
+                ) : null}
               </form>
-              <script>
-                {`function clikeMe() {
-                console.log("I am Clicked")
-              }`}
-              </script>
             </div>
           </div>
         </div>
@@ -385,11 +439,17 @@ class AddOffer extends Component {
 
 AddOffer.propTypes = {
   firestore: PropTypes.object,
+  notify: PropTypes.object.isRequired,
+  notifyUser: PropTypes.func.isRequired,
 };
 
 export default compose(
   firestoreConnect(() => ["courses"]),
-  connect((state) => ({
-    courses: state.firestore.data.courses,
-  }))
+  connect(
+    (state) => ({
+      courses: state.firestore.data.courses,
+      notify: state.notify,
+    }),
+    { notifyUser }
+  )
 )(AddOffer);
