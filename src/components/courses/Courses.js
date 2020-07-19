@@ -41,8 +41,8 @@ function Courses() {
             <td>{course.term}</td>
             <td>{course.duration} weeks</td>
             <td>
-              <OverlayTrigger
-                placement="left"
+              {/* <OverlayTrigger
+                placement="top"
                 delay={{ hide: 100 }}
                 overlay={(props) => {
                   return (
@@ -53,15 +53,15 @@ function Courses() {
                 }}
               >
                 <Link
-                  to={`/courses/${course.id}`}
+                  to={`/courses/students`}
                   className="btn btn-secondary btn-sm"
                 >
                   <i className="fas fa-user-graduate"></i>
                 </Link>
-              </OverlayTrigger>
+              </OverlayTrigger> */}
 
               <OverlayTrigger
-                placement="right"
+                placement="top"
                 delay={{ hide: 100 }}
                 overlay={(props) => {
                   return (
@@ -76,6 +76,25 @@ function Courses() {
                   className="btn btn-success btn-sm ml-2"
                 >
                   <i className="fas fa-pencil-alt"></i>
+                </Link>
+              </OverlayTrigger>
+
+              <OverlayTrigger
+                placement="top"
+                delay={{ hide: 100 }}
+                overlay={(props) => {
+                  return (
+                    <Tooltip id="button-tooltip" {...props}>
+                      Priods
+                    </Tooltip>
+                  );
+                }}
+              >
+                <Link
+                  to={`/courses/${course.id}/calendar`}
+                  className="btn btn-warning btn-sm ml-2"
+                >
+                  <i className="fas fa-calendar-alt"></i>
                 </Link>
               </OverlayTrigger>
             </td>

@@ -485,13 +485,13 @@ class AddOffer extends Component {
                   </div>
                 </div>
 
-                <a
+                {/* <a
                   href="http://127.0.0.1:8887/output.docx"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Click me
-                </a>
+                </a> */}
 
                 <br />
                 {message ? (

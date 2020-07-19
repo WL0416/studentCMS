@@ -42,11 +42,9 @@ class AddCourse extends Component {
     return (
       <React.Fragment>
         <div className="row">
-          <div className="col-md-9">
-            <h2>
-              <i className="fas fa-folder-plus"></i> Add Course
-            </h2>
-          </div>
+          <h2>
+            <i className="fas fa-folder-plus"></i> Add Course
+          </h2>
         </div>
         <div className="row">
           <div className="col-md-3">

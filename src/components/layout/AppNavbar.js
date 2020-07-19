@@ -53,10 +53,10 @@ class AppNavBar extends Component {
           <div className="collapse navbar-collapse" id="navbarMain">
             {isAuthenticated ? (
               <>
-                <form action={this.onSubmit} className="form-inline ml-auto">
+                <form className="form-inline ml-auto">
                   <div className="input-group">
                     <select
-                      class="form-control w-auto"
+                      className="form-control w-auto"
                       onChange={this.onChange}
                       name="searchWith"
                     >
@@ -82,11 +82,11 @@ class AppNavBar extends Component {
                       {auth.email}
                     </a>
                   </li>
-                  <li className="nav-item">
+                  {/* <li className="nav-item">
                     <Link to="/settings" className="nav-link">
                       Settings
                     </Link>
-                  </li>
+                  </li> */}
                   <li className="nav-item">
                     <a
                       href="#!"

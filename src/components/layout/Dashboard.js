@@ -5,7 +5,7 @@ import Sidebar from "../layout/Sidebar";
 function Dashboard() {
   return (
     <div className="row">
-      <div className="col-md-11 mb-5">
+      <div className="col-md-10 mb-5">
         <div className="row">
           <div className="col-md-6">
             <h2>
@@ -15,7 +15,9 @@ function Dashboard() {
         </div>
         <Courses />
       </div>
-      <div className="col-md-1">
+      <div className="col-md-2">
+        <br />
+        <br />
         <Sidebar />
       </div>
     </div>
