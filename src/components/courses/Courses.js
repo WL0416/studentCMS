@@ -21,7 +21,7 @@ function Courses() {
   const coursesArray = Object.values(courses);
 
   return (
-    <table className="table table-striped">
+    <table className="table table-striped" id="courseTable">
       <thead className="thead-inverse">
         <tr>
           <th>Name</th>
