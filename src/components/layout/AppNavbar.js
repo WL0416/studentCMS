@@ -7,7 +7,8 @@ import { connect } from "react-redux";
 
 class AppNavBar extends Component {
   state = {
-    isAutheticated: false,
+    isAuthenticated: false,
+    searchWith: "sid",
   };
 
   // this is the new way the update the state from the props,
@@ -29,6 +30,14 @@ class AppNavBar extends Component {
     firebase.logout();
   };
 
+  onSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
   render() {
     const { isAuthenticated } = this.state;
     const { auth } = this.props;
@@ -40,46 +49,55 @@ class AppNavBar extends Component {
           <Link to="/" className="navbar-brand">
             Student CMS
           </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="navbarMain"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
+
           <div className="collapse navbar-collapse" id="navbarMain">
-            {/* <ul className="navbar-nav mr-auto">
-              {isAuthenticated ? (
-                <li className="nav-item">
-                  <Link to="/" className="nav-link">
-                    Dashboard
-                  </Link>
-                </li>
-              ) : null}
-            </ul> */}
             {isAuthenticated ? (
-              <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                  <a href="#!" className="nav-link">
-                    {auth.email}
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <Link to="/settings" className="nav-link">
-                    Settings
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <a
-                    href="#!"
-                    className="nav-link"
-                    onClick={this.onLogoutClick}
+              <>
+                <form action={this.onSubmit} className="form-inline ml-auto">
+                  <div className="input-group">
+                    <select
+                      class="form-control w-auto"
+                      onChange={this.onChange}
+                      name="searchWith"
+                    >
+                      <option value="sid">SID</option>
+                      <option value="name">Name</option>
+                    </select>
+                    <input
+                      type="search"
+                      className="form-control mr-sm-2 w-auto"
+                      aria-label="Search"
+                    />
+                  </div>
+                  <button
+                    className="btn btn-outline-success my-2 my-sm-0"
+                    type="submit"
                   >
-                    Logout
-                  </a>
-                </li>
-              </ul>
+                    Search
+                  </button>
+                </form>
+                <ul className="navbar-nav ml-auto">
+                  <li className="nav-item">
+                    <a href="#!" className="nav-link">
+                      {auth.email}
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/settings" className="nav-link">
+                      Settings
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <a
+                      href="#!"
+                      className="nav-link"
+                      onClick={this.onLogoutClick}
+                    >
+                      Logout
+                    </a>
+                  </li>
+                </ul>
+              </>
             ) : null}
             {allowRegistration && !isAuthenticated ? (
               <ul className="navbar-nav ml-auto">

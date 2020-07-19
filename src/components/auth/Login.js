@@ -32,9 +32,9 @@ class Login extends Component {
     const { message, messageType } = this.props.notify;
 
     return (
-      <div>
+      <>
         <div className="row">
-          <div className="col-md-6 mx-auto">
+          <div className="col-md-6 mx-auto mt-auto">
             <div className="card">
               <div className="card-body">
                 {message ? (
@@ -79,7 +79,7 @@ class Login extends Component {
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }

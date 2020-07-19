@@ -8,6 +8,7 @@ import Login from "./components/auth/Login";
 import Settings from "./components/settings/Settings";
 import Register from "./components/auth/Register";
 import AddOffer from "./components/offer/AddOffer";
+import Students from "./components/students/Students";
 import { Provider } from "react-redux";
 import store, { rrfProps } from "./store";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
@@ -50,6 +51,11 @@ function App() {
                   exact
                   path="/courses/edit/:id"
                   component={UserIsAuthenticated(EditCourse)}
+                />
+                <Route
+                  exact
+                  path="/Students"
+                  component={UserIsAuthenticated(Students)}
                 />
                 <Route
                   exact

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useFirestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import Spinner from "../layout/Spinner";
 
 function Courses() {
@@ -40,18 +41,43 @@ function Courses() {
             <td>{course.term}</td>
             <td>{course.duration} weeks</td>
             <td>
-              <Link
-                to={`/courses/${course.id}`}
-                className="btn btn-secondary btn-sm"
+              <OverlayTrigger
+                placement="left"
+                delay={{ hide: 100 }}
+                overlay={(props) => {
+                  return (
+                    <Tooltip id="button-tooltip" {...props}>
+                      Students
+                    </Tooltip>
+                  );
+                }}
               >
-                <i className="fas fa-user-graduate"></i>
-              </Link>
-              <Link
-                to={`/courses/edit/${course.id}`}
-                className="btn btn-success btn-sm ml-2"
+                <Link
+                  to={`/courses/${course.id}`}
+                  className="btn btn-secondary btn-sm"
+                >
+                  <i className="fas fa-user-graduate"></i>
+                </Link>
+              </OverlayTrigger>
+
+              <OverlayTrigger
+                placement="right"
+                delay={{ hide: 100 }}
+                overlay={(props) => {
+                  return (
+                    <Tooltip id="button-tooltip" {...props}>
+                      Edit
+                    </Tooltip>
+                  );
+                }}
               >
-                <i className="fas fa-pencil-alt"></i>
-              </Link>
+                <Link
+                  to={`/courses/edit/${course.id}`}
+                  className="btn btn-success btn-sm ml-2"
+                >
+                  <i className="fas fa-pencil-alt"></i>
+                </Link>
+              </OverlayTrigger>
             </td>
           </tr>
         ))}

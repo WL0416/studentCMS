@@ -39,6 +39,7 @@ class AddOffer extends Component {
     totalDue: "",
     template: "",
     isSaved: false,
+    isGenerated: false,
   };
 
   onClick = (e) => {
@@ -137,8 +138,39 @@ class AddOffer extends Component {
     axios
       .post(`http://localhost:3000/offerGenerate`, this.state)
       .then((response) => {
-        console.log(response.headers);
-        download(response.data, "output.docx");
+        console.log(
+          response.headers,
+          Object.keys(response),
+          response.status,
+          response.statusText,
+          response.config,
+          response.request
+        );
+        this.setState({
+          ...this.state,
+          isGenerated: true,
+        });
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  onDownload = (e) => {
+    e.preventDefault();
+
+    axios
+      .get("http://localhost:3000/offerGenerate")
+      .then((response) => {
+        console.log(
+          response.headers,
+          Object.keys(response),
+          response.status,
+          response.statusText,
+          response.config,
+          response.request
+        );
+        download(response.data, "test.xlsx");
       })
       .catch((error) => {
         alert(error);
@@ -402,28 +434,65 @@ class AddOffer extends Component {
                   </div>
                 </div>
                 <br />
-                <input
-                  type="button"
-                  value="Save"
-                  onClick={
-                    this.state.courseName ? this.onClick : this.alertUser
-                  }
-                  className="btn btn-info btn-block col-md-4 offset-md-4"
-                />
-                {this.state.isSaved ? (
-                  <input
-                    type="submit"
-                    value="Generate Offer"
-                    className="btn btn-success btn-block col-md-4 offset-md-4"
-                  />
-                ) : (
-                  <input
-                    type="submit"
-                    value="Generate Offer"
-                    className="btn btn-secondary btn-block col-md-4 offset-md-4"
-                    disabled
-                  />
-                )}
+                <div className="row">
+                  <div className="col-md-4">
+                    <input
+                      type="button"
+                      value="Save"
+                      onClick={
+                        this.state.courseName ? this.onClick : this.alertUser
+                      }
+                      className="btn btn-info btn-block"
+                    />
+                  </div>
+
+                  <div className="col-md-4">
+                    {" "}
+                    {this.state.isSaved ? (
+                      <input
+                        type="submit"
+                        value="Generate Offer"
+                        className="btn btn-success btn-block"
+                      />
+                    ) : (
+                      <input
+                        type="submit"
+                        value="Generate Offer"
+                        className="btn btn-secondary btn-block"
+                        disabled
+                      />
+                    )}
+                  </div>
+
+                  <div className="col-md-4">
+                    {" "}
+                    {this.state.isGenerated ? (
+                      <input
+                        type="button"
+                        value="Download"
+                        className="btn btn-primary btn-block"
+                        onClick={this.onDownload}
+                      />
+                    ) : (
+                      <input
+                        type="button"
+                        value="Download"
+                        className="btn btn-secondary btn-block"
+                        // disabled
+                        onClick={this.onDownload}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <a
+                  href="http://127.0.0.1:8887/output.docx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Click me
+                </a>
+
                 <br />
                 {message ? (
                   <Alert message={message} messageType={messageType} />
