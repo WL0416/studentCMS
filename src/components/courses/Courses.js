@@ -41,25 +41,6 @@ function Courses() {
             <td>{course.term}</td>
             <td>{course.duration} weeks</td>
             <td>
-              {/* <OverlayTrigger
-                placement="top"
-                delay={{ hide: 100 }}
-                overlay={(props) => {
-                  return (
-                    <Tooltip id="button-tooltip" {...props}>
-                      Students
-                    </Tooltip>
-                  );
-                }}
-              >
-                <Link
-                  to={`/courses/students`}
-                  className="btn btn-secondary btn-sm"
-                >
-                  <i className="fas fa-user-graduate"></i>
-                </Link>
-              </OverlayTrigger> */}
-
               <OverlayTrigger
                 placement="top"
                 delay={{ hide: 100 }}
