@@ -3,17 +3,18 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { Col, Row, Card, Form, Button, Table } from "react-bootstrap";
 import { firestoreConnect } from "react-redux-firebase";
+import firebase from "firebase/app";
 import { Link } from "react-router-dom";
 import Spinner from "../layout/Spinner";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
+import { inputDate, convertDate } from "../util/tools";
+import PropTypes from "prop-types";
 
 class Calendar extends Component {
   state = {
     id: "",
     start: "",
     end: "",
-    editId: "",
-    periods: [],
   };
 
   componentDidUpdate() {
@@ -21,25 +22,46 @@ class Calendar extends Component {
     if (course && this.state.id !== course.id) {
       this.setState({
         ...course,
-        // start: inputDate(course.start.seconds),
-        // end: inputDate(course.end.seconds),
       });
     }
   }
+
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    const { id, start, end } = this.state;
+    const { firestore } = this.props;
+    console.log("clicked");
+    if (!start || !end) {
+      alert("Need start or end date!");
+    } else {
+      // parse string of date to the format of firebase accepted.
+      const formatStart = firebase.firestore.Timestamp.fromDate(
+        new Date(start)
+      );
+      const formatEnd = firebase.firestore.Timestamp.fromDate(new Date(end));
+
+      firestore.add(
+        { collection: `courses/${id}/calendar` },
+        { start: formatStart, end: formatEnd }
+      );
+    }
+  };
 
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   render() {
-    const { id, periods } = this.state;
+    const { id, name } = this.state;
+    const { calendar } = this.props;
     if (id) {
       return (
         <>
           <Row>
             <Col md={9}>
               <h2>
-                <i className="far fa-calendar"></i> Course Calendar
+                <i className="far fa-calendar"></i> {name}
               </h2>
             </Col>
           </Row>
@@ -51,38 +73,46 @@ class Calendar extends Component {
             </Col>
           </Row>
           <Card>
-            <Card.Header>Add Period</Card.Header>
+            <Card.Header>Add Class</Card.Header>
             <Card.Body>
-              <Row>
-                <Col md={5}>
-                  <Form>
+              <Form onSubmit={this.onSubmit}>
+                <Row>
+                  <Col md={5}>
                     <Form.Group controlId="formStartDate">
                       <Form.Label>Start Date</Form.Label>
-                      <Form.Control type="date"></Form.Control>
+                      <Form.Control
+                        type="date"
+                        name="start"
+                        onChange={this.onChange}
+                        value={this.state.start}
+                      ></Form.Control>
                     </Form.Group>
-                  </Form>
-                </Col>
-                <Col md={5}>
-                  <Form>
+                  </Col>
+                  <Col md={5}>
                     <Form.Group controlId="formEndDate">
                       <Form.Label>End Date</Form.Label>
-                      <Form.Control type="date"></Form.Control>
+                      <Form.Control
+                        type="date"
+                        name="end"
+                        onChange={this.onChange}
+                        value={this.state.end}
+                      ></Form.Control>
                     </Form.Group>
-                  </Form>
-                </Col>
-                <Col md={2} style={{ margin: "auto" }}>
-                  <Button variant="warning" type="submit" block>
-                    Add
-                  </Button>
-                </Col>
-              </Row>
+                  </Col>
+                  <Col md={2} style={{ margin: "auto" }}>
+                    <Button variant="warning" type="submit" block>
+                      Add
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
             </Card.Body>
           </Card>
           <br />
           <Card>
-            <Card.Header>Course Classes</Card.Header>
+            <Card.Header>Classes</Card.Header>
             <Card.Body>
-              {periods.length > 0 ? (
+              {calendar ? (
                 <Table striped bordered hover>
                   <thead>
                     <tr>
@@ -93,12 +123,31 @@ class Calendar extends Component {
                   </thead>
 
                   <tbody>
-                    {periods.map((period) => (
-                      <tr>
-                        <td>{period.start}</td>
-                        <td>{period.end}</td>
+                    {calendar.map((period) => (
+                      <tr id={period.id}>
+                        <td>{convertDate(inputDate(period.start.seconds))}</td>
+                        <td>{convertDate(inputDate(period.end.seconds))}</td>
                         <td>
                           {" "}
+                          <OverlayTrigger
+                            placement="top"
+                            delay={{ hide: 100 }}
+                            overlay={(props) => {
+                              return (
+                                <Tooltip id="button-tooltip" {...props}>
+                                  Students
+                                </Tooltip>
+                              );
+                            }}
+                          >
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="mr-2"
+                            >
+                              <i className="fas fa-user-graduate"></i>
+                            </Button>
+                          </OverlayTrigger>
                           <OverlayTrigger
                             placement="top"
                             delay={{ hide: 100 }}
@@ -110,7 +159,11 @@ class Calendar extends Component {
                               );
                             }}
                           >
-                            <Button variant="success" size="sm">
+                            <Button
+                              variant="success"
+                              size="sm"
+                              className="mr-2"
+                            >
                               <i className="fas fa-pencil-alt"></i>
                             </Button>
                           </OverlayTrigger>
@@ -147,11 +200,27 @@ class Calendar extends Component {
   }
 }
 
+Calendar.propTypes = {
+  course: PropTypes.object,
+  calendar: PropTypes.array,
+};
+
 export default compose(
   firestoreConnect((props) => [
-    { collection: "courses", storeAs: "course", doc: props.match.params.id },
+    {
+      collection: "courses",
+      storeAs: "course",
+      doc: props.match.params.id,
+    },
+    {
+      collection: "courses",
+      storeAs: "calendar",
+      doc: props.match.params.id,
+      subcollections: [{ collection: "calendar" }],
+    },
   ]),
   connect(({ firestore: { ordered } }) => ({
     course: ordered.course && ordered.course[0],
+    calendar: ordered.calendar,
   }))
 )(Calendar);

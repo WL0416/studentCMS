@@ -11,8 +11,6 @@ class AddCourse extends Component {
     cricos: "",
     duration: "",
     term: "",
-    // start: "",
-    // end: "",
   };
 
   onSubmit = (e) => {
@@ -20,14 +18,6 @@ class AddCourse extends Component {
 
     const newCourse = this.state;
     const { firestore } = this.props;
-
-    // parse string of date to the format of firebase accepted.
-    // newCourse.start = firebase.firestore.Timestamp.fromDate(
-    //   new Date(newCourse.start)
-    // );
-    // newCourse.end = firebase.firestore.Timestamp.fromDate(
-    //   new Date(newCourse.end)
-    // );
 
     firestore
       .add({ collection: "courses" }, newCourse)
@@ -43,7 +33,7 @@ class AddCourse extends Component {
       <React.Fragment>
         <div className="row">
           <h2>
-            <i className="fas fa-folder-plus"></i> Add Course
+            <i className="fas fa-folder-plus"></i> New Course
           </h2>
         </div>
         <div className="row">
@@ -121,32 +111,6 @@ class AddCourse extends Component {
                     />
                   </div>
                 </div>
-                {/* <div className="row">
-                <div className="col-md-6 form-group">
-                    <label htmlFor="start">Start Date</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      name="start"
-                      minLength="2"
-                      required
-                      onChange={this.onChange}
-                      value={this.state.start.valueAsNumber}
-                    />
-                  </div>
-                  <div className="col-md-6 form-group">
-                    <label htmlFor="end">End Date</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      name="end"
-                      minLength="2"
-                      required
-                      onChange={this.onChange}
-                      value={this.state.end.valueAsNumber}
-                    />
-                  </div>
-                </div> */}
                 <br />
                 <input
                   type="submit"

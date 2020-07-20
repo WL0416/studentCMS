@@ -23,12 +23,3 @@ export const convertDate = (date) => {
   const timeArray = date.split("-");
   return timeArray[2] + "/" + timeArray[1] + "/" + timeArray[0];
 };
-
-// Tooltips
-export const renderTooltip = (props) => {
-  return (
-    <Tooltip id="button-tooltip" {...props}>
-      Simple tooltip
-    </Tooltip>
-  );
-};

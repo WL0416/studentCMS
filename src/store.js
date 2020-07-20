@@ -10,13 +10,14 @@ import notifyReducer from "./reducers/notifyReducer";
 import settingsReducer from "./reducers/settingsReducer";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_hfhYPZjU85uRlayGncuKEsKenIG29D0",
-  authDomain: "studentmanager-55f6c.firebaseapp.com",
-  databaseURL: "https://studentmanager-55f6c.firebaseio.com",
-  projectId: "studentmanager-55f6c",
-  storageBucket: "studentmanager-55f6c.appspot.com",
-  messagingSenderId: "467225539195",
-  appId: "1:467225539195:web:1566ba3ab3768abc7428de",
+  apiKey: "AIzaSyBhyPbYEHrd5tGa1UaLI6cB1Qvyr10PRXE",
+  authDomain: "newton-c02a2.firebaseapp.com",
+  databaseURL: "https://newton-c02a2.firebaseio.com",
+  projectId: "newton-c02a2",
+  storageBucket: "newton-c02a2.appspot.com",
+  messagingSenderId: "255848174007",
+  appId: "1:255848174007:web:dc1ac23e46b1df462d5832",
+  measurementId: "G-RP9TGQ19YD",
 };
 
 // react redux firebase config
