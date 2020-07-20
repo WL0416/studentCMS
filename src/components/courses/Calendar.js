@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import Spinner from "../layout/Spinner";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { inputDate, convertDate } from "../util/tools";
+import Sidebar from "../layout/Sidebar";
 import PropTypes from "prop-types";
 
 class Calendar extends Component {
@@ -72,126 +73,137 @@ class Calendar extends Component {
               </Link>
             </Col>
           </Row>
-          <Card>
-            <Card.Header>Add Class</Card.Header>
-            <Card.Body>
-              <Form onSubmit={this.onSubmit}>
-                <Row>
-                  <Col md={5}>
-                    <Form.Group controlId="formStartDate">
-                      <Form.Label>Start Date</Form.Label>
-                      <Form.Control
-                        type="date"
-                        name="start"
-                        onChange={this.onChange}
-                        value={this.state.start}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col md={5}>
-                    <Form.Group controlId="formEndDate">
-                      <Form.Label>End Date</Form.Label>
-                      <Form.Control
-                        type="date"
-                        name="end"
-                        onChange={this.onChange}
-                        value={this.state.end}
-                      ></Form.Control>
-                    </Form.Group>
-                  </Col>
-                  <Col md={2} style={{ margin: "auto" }}>
-                    <Button variant="warning" type="submit" block>
-                      Add
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </Card.Body>
-          </Card>
-          <br />
-          <Card>
-            <Card.Header>Classes</Card.Header>
-            <Card.Body>
-              {calendar ? (
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Start Date</th>
-                      <th>End Date</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
+          <Row>
+            <div className="col-md-10 mb-5">
+              <Card>
+                <Card.Header>Add Class</Card.Header>
+                <Card.Body>
+                  <Form onSubmit={this.onSubmit}>
+                    <Row>
+                      <Col md={5}>
+                        <Form.Group controlId="formStartDate">
+                          <Form.Label>Start Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="start"
+                            onChange={this.onChange}
+                            value={this.state.start}
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+                      <Col md={5}>
+                        <Form.Group controlId="formEndDate">
+                          <Form.Label>End Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="end"
+                            onChange={this.onChange}
+                            value={this.state.end}
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+                      <Col md={2} style={{ margin: "auto" }}>
+                        <Button variant="warning" type="submit" block>
+                          Add
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Card.Body>
+              </Card>
+              <br />
+              <Card>
+                <Card.Header>Classes</Card.Header>
+                <Card.Body>
+                  {calendar ? (
+                    <Table striped bordered hover>
+                      <thead>
+                        <tr>
+                          <th>Start Date</th>
+                          <th>End Date</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
 
-                  <tbody>
-                    {calendar.map((period) => (
-                      <tr id={period.id}>
-                        <td>{convertDate(inputDate(period.start.seconds))}</td>
-                        <td>{convertDate(inputDate(period.end.seconds))}</td>
-                        <td>
-                          {" "}
-                          <OverlayTrigger
-                            placement="top"
-                            delay={{ hide: 100 }}
-                            overlay={(props) => {
-                              return (
-                                <Tooltip id="button-tooltip" {...props}>
-                                  Students
-                                </Tooltip>
-                              );
-                            }}
-                          >
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              className="mr-2"
-                            >
-                              <i className="fas fa-user-graduate"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            placement="top"
-                            delay={{ hide: 100 }}
-                            overlay={(props) => {
-                              return (
-                                <Tooltip id="button-tooltip" {...props}>
-                                  Edit
-                                </Tooltip>
-                              );
-                            }}
-                          >
-                            <Button
-                              variant="success"
-                              size="sm"
-                              className="mr-2"
-                            >
-                              <i className="fas fa-pencil-alt"></i>
-                            </Button>
-                          </OverlayTrigger>
-                          <OverlayTrigger
-                            placement="top"
-                            delay={{ hide: 100 }}
-                            overlay={(props) => {
-                              return (
-                                <Tooltip id="button-tooltip" {...props}>
-                                  Delete
-                                </Tooltip>
-                              );
-                            }}
-                          >
-                            <Button variant="danger" size="sm">
-                              <i className="fas fa-times"></i>
-                            </Button>
-                          </OverlayTrigger>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <h2 style={{ textAlign: "center" }}>No classes </h2>
-              )}
-            </Card.Body>
-          </Card>
+                      <tbody>
+                        {calendar.map((period) => (
+                          <tr id={period.id}>
+                            <td>
+                              {convertDate(inputDate(period.start.seconds))}
+                            </td>
+                            <td>
+                              {convertDate(inputDate(period.end.seconds))}
+                            </td>
+                            <td>
+                              {" "}
+                              <OverlayTrigger
+                                placement="top"
+                                delay={{ hide: 100 }}
+                                overlay={(props) => {
+                                  return (
+                                    <Tooltip id="button-tooltip" {...props}>
+                                      Students
+                                    </Tooltip>
+                                  );
+                                }}
+                              >
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  className="mr-2"
+                                >
+                                  <i className="fas fa-user-graduate"></i>
+                                </Button>
+                              </OverlayTrigger>
+                              <OverlayTrigger
+                                placement="top"
+                                delay={{ hide: 100 }}
+                                overlay={(props) => {
+                                  return (
+                                    <Tooltip id="button-tooltip" {...props}>
+                                      Edit
+                                    </Tooltip>
+                                  );
+                                }}
+                              >
+                                <Button
+                                  variant="success"
+                                  size="sm"
+                                  className="mr-2"
+                                >
+                                  <i className="fas fa-pencil-alt"></i>
+                                </Button>
+                              </OverlayTrigger>
+                              <OverlayTrigger
+                                placement="top"
+                                delay={{ hide: 100 }}
+                                overlay={(props) => {
+                                  return (
+                                    <Tooltip id="button-tooltip" {...props}>
+                                      Delete
+                                    </Tooltip>
+                                  );
+                                }}
+                              >
+                                <Button variant="danger" size="sm">
+                                  <i className="fas fa-times"></i>
+                                </Button>
+                              </OverlayTrigger>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ) : (
+                    <h2 style={{ textAlign: "center" }}>No classes </h2>
+                  )}
+                </Card.Body>
+              </Card>
+            </div>
+            <Col md={2}>
+              <Sidebar />
+            </Col>
+          </Row>
         </>
       );
     } else {
