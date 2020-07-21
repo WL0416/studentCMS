@@ -10,10 +10,10 @@ function Sidebar() {
         <Card>
           <Card.Body>
             <Link to="/courses/add" className="btn btn-success btn-block">
-              <span className="fas fa-plus">Course</span>
+              <i className="fas fa-plus">Course</i>
             </Link>
-            <Link to="/offer/add" className="btn btn-info btn-block">
-              <i className="fas fa-plus">Offer</i>
+            <Link to="/student/add" className="btn btn-info btn-block">
+              <i className="fas fa-plus">Student</i>
             </Link>
           </Card.Body>
         </Card>

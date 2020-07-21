@@ -66,7 +66,7 @@ function Courses() {
                 overlay={(props) => {
                   return (
                     <Tooltip id="button-tooltip" {...props}>
-                      Priods
+                      Calendar
                     </Tooltip>
                   );
                 }}

@@ -9,6 +9,7 @@ import Spinner from "../layout/Spinner";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { inputDate, convertDate } from "../util/tools";
 import Sidebar from "../layout/Sidebar";
+import ConfirmBox from "../layout/ConfirmBox";
 import PropTypes from "prop-types";
 
 class Calendar extends Component {
@@ -16,6 +17,8 @@ class Calendar extends Component {
     id: "",
     start: "",
     end: "",
+    showConfirmBox: false,
+    deleteDocName: "",
   };
 
   componentDidUpdate() {
@@ -26,6 +29,23 @@ class Calendar extends Component {
       });
     }
   }
+
+  setConfirmShow = () => {
+    this.setState({
+      showConfirmBox: !this.state.showConfirmBox,
+    });
+  };
+
+  onConfirmDelete = (e) => {
+    e.preventDefault();
+    const { firestore } = this.props;
+    const { id } = this.state;
+    firestore.delete({
+      collection: `courses/${id}/calendar`,
+      doc: e.target.name,
+    });
+    this.setState(this.setConfirmShow());
+  };
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -53,8 +73,13 @@ class Calendar extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  onClickDelete = (e) => {
+    e.preventDefault();
+    this.setConfirmShow();
+  };
+
   render() {
-    const { id, name } = this.state;
+    const { id, name, showConfirmBox } = this.state;
     const { calendar } = this.props;
     if (id) {
       return (
@@ -115,7 +140,10 @@ class Calendar extends Component {
               <Card>
                 <Card.Header>Classes</Card.Header>
                 <Card.Body>
-                  {calendar ? (
+                  {typeof calendar != "undefined" &&
+                  calendar != null &&
+                  calendar.length != null &&
+                  calendar.length > 0 ? (
                     <Table striped bordered hover>
                       <thead>
                         <tr>
@@ -127,7 +155,7 @@ class Calendar extends Component {
 
                       <tbody>
                         {calendar.map((period) => (
-                          <tr id={period.id}>
+                          <tr key={period.id}>
                             <td>
                               {convertDate(inputDate(period.start.seconds))}
                             </td>
@@ -148,30 +176,12 @@ class Calendar extends Component {
                                 }}
                               >
                                 <Button
-                                  variant="secondary"
+                                  variant="info"
                                   size="sm"
                                   className="mr-2"
+                                  name={period.id}
                                 >
                                   <i className="fas fa-user-graduate"></i>
-                                </Button>
-                              </OverlayTrigger>
-                              <OverlayTrigger
-                                placement="top"
-                                delay={{ hide: 100 }}
-                                overlay={(props) => {
-                                  return (
-                                    <Tooltip id="button-tooltip" {...props}>
-                                      Edit
-                                    </Tooltip>
-                                  );
-                                }}
-                              >
-                                <Button
-                                  variant="success"
-                                  size="sm"
-                                  className="mr-2"
-                                >
-                                  <i className="fas fa-pencil-alt"></i>
                                 </Button>
                               </OverlayTrigger>
                               <OverlayTrigger
@@ -185,10 +195,22 @@ class Calendar extends Component {
                                   );
                                 }}
                               >
-                                <Button variant="danger" size="sm">
+                                <Button
+                                  variant="danger"
+                                  size="sm"
+                                  name={period.id}
+                                  onClick={this.onClickDelete}
+                                >
                                   <i className="fas fa-times"></i>
                                 </Button>
                               </OverlayTrigger>
+                              <ConfirmBox
+                                showConfirmBox={showConfirmBox}
+                                setConfirmShow={this.setConfirmShow}
+                                message="Are you sure to delete this class?"
+                                onConfirm={this.onConfirmDelete}
+                                id={period.id}
+                              />
                             </td>
                           </tr>
                         ))}

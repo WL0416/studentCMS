@@ -10,7 +10,7 @@ import Alert from "../layout/Alert";
 import download from "js-file-download";
 import axios from "axios";
 
-class AddOffer extends Component {
+class AddStudent extends Component {
   state = {
     firstName: "",
     lastName: "",
@@ -506,7 +506,7 @@ class AddOffer extends Component {
   }
 }
 
-AddOffer.propTypes = {
+AddStudent.propTypes = {
   firestore: PropTypes.object,
   notify: PropTypes.object.isRequired,
   notifyUser: PropTypes.func.isRequired,
@@ -521,4 +521,4 @@ export default compose(
     }),
     { notifyUser }
   )
-)(AddOffer);
+)(AddStudent);

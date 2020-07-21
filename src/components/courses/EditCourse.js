@@ -28,14 +28,6 @@ class EditCourse extends Component {
     const newCourse = this.state;
     const { firestore } = this.props;
 
-    // // parse string of date to the format of firebase accepted.
-    // newCourse.start = firebase.firestore.Timestamp.fromDate(
-    //   new Date(newCourse.start)
-    // );
-    // newCourse.end = firebase.firestore.Timestamp.fromDate(
-    //   new Date(newCourse.end)
-    // );
-
     // firestore update document
     firestore
       .update({ collection: "courses", doc: newCourse.id }, newCourse)
@@ -147,35 +139,7 @@ class EditCourse extends Component {
                       />
                     </div>
                   </div>
-                  {/* <div className="row">
-                    <div className="col-md-6 form-group">
-                      <label htmlFor="start">Start Date</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        name="start"
-                        minLength="2"
-                        required
-                        onChange={this.onChange}
-                        value={this.state.start}
-                      />
-                    </div>
-
-                    <div className="col-md-6 form-group">
-                      <label htmlFor="end">End Date</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        name="end"
-                        minLength="2"
-                        required
-                        onChange={this.onChange}
-                        value={this.state.end}
-                      />
-                    </div>
-                  </div> */}
                   <br />
-
                   <input
                     type="submit"
                     value="Update"
