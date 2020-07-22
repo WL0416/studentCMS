@@ -175,14 +175,13 @@ class Calendar extends Component {
                                   );
                                 }}
                               >
-                                <Button
-                                  variant="info"
-                                  size="sm"
-                                  className="mr-2"
-                                  name={period.id}
+                                <Link
+                                  to={`/courses/${id}/calendar/${period.id}/students`}
+                                  className="btn btn-info btn-sm ml-2 mr-2"
                                 >
-                                  <i className="fas fa-user-graduate"></i>
-                                </Button>
+                                  {" "}
+                                  <i className="fas fa-user-graduate"></i>{" "}
+                                </Link>
                               </OverlayTrigger>
                               <OverlayTrigger
                                 placement="top"
@@ -244,12 +243,12 @@ export default compose(
     {
       collection: "courses",
       storeAs: "course",
-      doc: props.match.params.id,
+      doc: props.match.params.cid,
     },
     {
       collection: "courses",
       storeAs: "calendar",
-      doc: props.match.params.id,
+      doc: props.match.params.cid,
       subcollections: [{ collection: "calendar" }],
     },
   ]),

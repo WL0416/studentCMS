@@ -50,22 +50,22 @@ function App() {
                 />
                 <Route
                   exact
-                  path="/courses/edit/:id"
+                  path="/courses/edit/:cid"
                   component={UserIsAuthenticated(EditCourse)}
                 />
                 <Route
                   exact
-                  path="/courses/:id/calendar"
+                  path="/courses/:cid/calendar"
                   component={UserIsAuthenticated(Calendar)}
                 />
                 <Route
                   exact
-                  path="/students"
+                  path="/courses/:cid/calendar/:pid/students"
                   component={UserIsAuthenticated(Students)}
                 />
                 <Route
                   exact
-                  path="/student/add"
+                  path="/courses/:cid/calendar/:pid/newstudent"
                   component={UserIsAuthenticated(AddStudent)}
                 />
                 <Route

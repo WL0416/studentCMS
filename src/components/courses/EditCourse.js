@@ -47,8 +47,6 @@ class EditCourse extends Component {
     if (course && this.state.id !== course.id) {
       this.setState({
         ...course,
-        // start: inputDate(course.start.seconds),
-        // end: inputDate(course.end.seconds),
       });
     }
   }
@@ -165,7 +163,7 @@ class EditCourse extends Component {
 
 export default compose(
   firestoreConnect((props) => [
-    { collection: "courses", storeAs: "course", doc: props.match.params.id },
+    { collection: "courses", storeAs: "course", doc: props.match.params.cid },
   ]),
   connect(({ firestore: { ordered } }) => ({
     course: ordered.course && ordered.course[0],
