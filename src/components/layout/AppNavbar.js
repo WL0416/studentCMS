@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { firebaseConnect } from "react-redux-firebase";
+import { firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import SearchBox from "./SearchBox";
 
 class AppNavBar extends Component {
   state = {
     isAuthenticated: false,
     searchWith: "sid",
+    showSearchBox: false,
+    searchContent: "",
+    searchResults: "",
   };
 
   // this is the new way the update the state from the props,
@@ -23,6 +27,18 @@ class AppNavBar extends Component {
     }
   }
 
+  setSearchShow = () => {
+    const { searchContent } = this.state;
+    const { firestore } = this.props;
+    if (searchContent != null) {
+      this.setState({
+        showSearchBox: !this.state.showSearchBox,
+      });
+    } else {
+      alert("Please type in sid or name in the search bar");
+    }
+  };
+
   onLogoutClick = (e) => {
     e.preventDefault();
 
@@ -30,16 +46,17 @@ class AppNavBar extends Component {
     firebase.logout();
   };
 
-  onSubmit = (e) => {
-    e.preventDefault();
-  };
-
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   render() {
-    const { isAuthenticated } = this.state;
+    const {
+      isAuthenticated,
+      searchWith,
+      showSearchBox,
+      searchResults,
+    } = this.state;
     const { auth } = this.props;
     const { allowRegistration } = this.props.settings;
 
@@ -66,16 +83,26 @@ class AppNavBar extends Component {
                     <input
                       type="search"
                       className="form-control mr-sm-2 w-auto"
+                      name="searchContent"
                       aria-label="Search"
+                      onChange={this.onChange}
+                      value={this.state.searchContent}
                     />
                   </div>
                   <button
                     className="btn btn-outline-success my-2 my-sm-0"
-                    type="submit"
+                    type="button"
+                    onClick={this.setSearchShow}
                   >
                     Search
                   </button>
                 </form>
+                <SearchBox
+                  showSearchBox={showSearchBox}
+                  setSearchShow={this.setSearchShow}
+                  searchWith={searchWith}
+                  searchResults={searchResults}
+                />
                 <ul className="navbar-nav ml-auto">
                   <li className="nav-item">
                     <a href="#!" className="nav-link">
@@ -127,8 +154,8 @@ AppNavBar.propTypes = {
 };
 
 export default compose(
-  firebaseConnect(),
-  connect((state, props) => ({
+  firestoreConnect(),
+  connect((state) => ({
     auth: state.firebase.auth,
     settings: state.settings,
   }))

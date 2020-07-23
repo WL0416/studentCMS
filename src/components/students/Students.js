@@ -111,7 +111,7 @@ class Students extends Component {
                                 overlay={(props) => {
                                   return (
                                     <Tooltip id="button-tooltip" {...props}>
-                                      Edit
+                                      View & Edit
                                     </Tooltip>
                                   );
                                 }}
@@ -121,7 +121,7 @@ class Students extends Component {
                                   className="btn btn-info btn-sm ml-2 mr-2"
                                 >
                                   {" "}
-                                  <i className="fas fa-pencil-alt"></i>{" "}
+                                  <i className="fas fa-eye"></i>{" "}
                                 </Link>
                               </OverlayTrigger>
                               <OverlayTrigger

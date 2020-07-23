@@ -6,7 +6,6 @@ import { firestoreConnect } from "react-redux-firebase";
 import { Link } from "react-router-dom";
 import { inputDate, convertDate } from "../util/tools";
 import Spinner from "../layout/Spinner";
-import axios from "axios";
 
 class EditStudent extends Component {
   state = {
@@ -51,26 +50,6 @@ class EditStudent extends Component {
         this.state
       )
       .then(() => this.props.history.push(`/${basicPath}`));
-
-    // axios
-    //   .post(`http://localhost:3000/offerGenerate`, this.state)
-    //   .then((response) => {
-    //     console.log(
-    //       response.headers,
-    //       Object.keys(response),
-    //       response.status,
-    //       response.statusText,
-    //       response.config,
-    //       response.request
-    //     );
-    //     this.setState({
-    //       ...this.state,
-    //       isGenerated: true,
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     alert(error);
-    //   });
   };
 
   render() {
@@ -82,7 +61,7 @@ class EditStudent extends Component {
           <div className="row">
             <div className="col-md-9">
               <h2>
-                <i className="fas fa-kiwi-bird"></i> Edit Student
+                <i className="fas fa-kiwi-bird"></i> View & Edit Student Info
               </h2>
             </div>
           </div>
