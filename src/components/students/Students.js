@@ -36,6 +36,22 @@ class Students extends Component {
     });
   };
 
+  onConfirmDelete = (e) => {
+    e.preventDefault();
+    const { firestore } = this.props;
+    const { cid, pid } = this.state;
+    firestore.delete({
+      collection: `courses/${cid}/calendar/${pid}/students`,
+      doc: e.target.name,
+    });
+    this.setState(this.setConfirmShow());
+  };
+
+  onClickDelete = (e) => {
+    e.preventDefault();
+    this.setConfirmShow();
+  };
+
   render() {
     const { students } = this.props;
     const { cid, pid, name, start, showConfirmBox } = this.state;
@@ -68,7 +84,7 @@ class Students extends Component {
                     <Table striped bordered hover>
                       <thead>
                         <tr>
-                          <th>ID</th>
+                          <th>Student ID</th>
                           <th>Name</th>
                           <th>Email</th>
                           <th>Phone</th>
@@ -80,8 +96,10 @@ class Students extends Component {
                       <tbody>
                         {students.map((student) => (
                           <tr key={student.id}>
-                            <td>{student.sid}</td>
-                            <td>{student.name}</td>
+                            <td>{student.sId}</td>
+                            <td>
+                              {student.firstName} {student.lastName}
+                            </td>
                             <td>{student.email}</td>
                             <td>{student.phone}</td>
                             <td>{student.status}</td>
@@ -99,11 +117,11 @@ class Students extends Component {
                                 }}
                               >
                                 <Link
-                                  to={`/stduents/${student.id}`}
+                                  to={`students/${student.id}`}
                                   className="btn btn-info btn-sm ml-2 mr-2"
                                 >
                                   {" "}
-                                  <i className="fas fa-pencil"></i>{" "}
+                                  <i className="fas fa-pencil-alt"></i>{" "}
                                 </Link>
                               </OverlayTrigger>
                               <OverlayTrigger
@@ -129,7 +147,7 @@ class Students extends Component {
                               <ConfirmBox
                                 showConfirmBox={showConfirmBox}
                                 setConfirmShow={this.setConfirmShow}
-                                message="Are you sure to delete this class?"
+                                message="Are you sure to remove this student?"
                                 onConfirm={this.onConfirmDelete}
                                 id={student.id}
                               />

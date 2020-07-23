@@ -9,6 +9,7 @@ import Login from "./components/auth/Login";
 import Settings from "./components/settings/Settings";
 import Register from "./components/auth/Register";
 import AddStudent from "./components/students/AddStudent";
+import EditStudent from "./components/students/EditStudent";
 import Students from "./components/students/Students";
 import { Provider } from "react-redux";
 import store, { rrfProps } from "./store";
@@ -67,6 +68,11 @@ function App() {
                   exact
                   path="/courses/:cid/calendar/:pid/newstudent"
                   component={UserIsAuthenticated(AddStudent)}
+                />
+                <Route
+                  exact
+                  path="/courses/:cid/calendar/:pid/students/:sid"
+                  component={UserIsAuthenticated(EditStudent)}
                 />
                 <Route
                   exact

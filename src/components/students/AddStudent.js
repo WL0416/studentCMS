@@ -5,11 +5,12 @@ import { firestoreConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { notifyUser } from "../../actions/notifyActions";
-import Alert from "../layout/Alert";
+// import { notifyUser } from "../../actions/notifyActions";
+// import Alert from "../layout/Alert";
 import download from "js-file-download";
 import axios from "axios";
 import Spinner from "../layout/Spinner";
+import { inputDate, convertDate } from "../util/tools";
 
 class AddStudent extends Component {
   state = {
@@ -40,15 +41,16 @@ class AddStudent extends Component {
     tuitionFirst: "",
     totalDue: "",
     template: "",
+    isEnrolled: "NotEnrol",
     isSaved: false,
     isGenerated: false,
   };
 
-  onClick = (e) => {
+  onClickSave = (e) => {
     e.preventDefault();
 
     // const { firestore } = this.props;
-    const { courses } = this.props;
+    const { courses, course, date, firestore } = this.props;
     const { code, cricos, duration, term } = Object.values(courses).filter(
       (course) => course.name === this.state.courseName
     )[0];
@@ -129,9 +131,30 @@ class AddStudent extends Component {
     //   new Date(newOffer.birthday)
     // );
 
-    // firestore
-    //   .add({ collection: "offers" }, newOffer)
-    //   .then(() => this.props.history.push("/"));
+    const newStudent = {
+      sId: this.state.studentId,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      birthday: this.state.birthday,
+      passport: this.state.passport,
+      phone: this.state.phone,
+      email: this.state.email,
+      address: this.state.address,
+      status: this.state.isEnrolled,
+      cid: course.id,
+      pid: date.id,
+      campus: this.state.campus,
+    };
+
+    firestore
+      .add(
+        { collection: `courses/${course.id}/calendar/${date.id}/students` },
+        newStudent
+      )
+      .catch((err) => {
+        alert(err);
+      })
+      .then(alert("Save successfully!"));
   };
 
   onSubmit = (e) => {
@@ -183,21 +206,25 @@ class AddStudent extends Component {
     this.setState({ [e.target.name]: e.target.value, isSaved: false });
   };
 
-  // componentDidUpdate() {
-  //   const { courses } = this.props;
-  //   if (courses && this.state.id !== courses.id) {
-  //     this.setState({
-  //       ...course,
-  //       // start: inputDate(course.start.seconds),
-  //       // end: inputDate(course.end.seconds),
-  //     });
-  //   }
-  // }
-
   alertUser = () => {
-    const { notifyUser } = this.props;
-    notifyUser("Please select a course to generate an offer...", "error");
+    alert("Please tpye in student's name, birthday and passport number.");
+    // notifyUser(
+    //   "Please tpye in student's name, birthday and passport number.",
+    //   "error"
+    // );
   };
+
+  componentDidUpdate() {
+    const { course, date } = this.props;
+    if (course != null && date != null && this.state.id !== course.id) {
+      this.setState({
+        id: course.id,
+        courseName: course.name,
+        start: convertDate(inputDate(date.start.seconds)),
+        end: convertDate(inputDate(date.end.seconds)),
+      });
+    }
+  }
 
   render() {
     const { courses, course, date } = this.props;
@@ -361,6 +388,92 @@ class AddStudent extends Component {
                   <div className="row">
                     <div className="col-md-6 form-group">
                       <label htmlFor="courseName">Course</label>
+                      <input
+                        type="text"
+                        name="defaultCourse"
+                        className="form-control"
+                        onChange={this.onChange}
+                        value={course.name}
+                        disabled
+                      />
+                    </div>
+
+                    <div className="col-md-3 form-group">
+                      <label htmlFor="start">Start Date</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="start"
+                        minLength="2"
+                        required
+                        onChange={this.onChange}
+                        value={inputDate(date.start.seconds)}
+                        disabled
+                      />
+                    </div>
+
+                    <div className="col-md-3 form-group">
+                      <label htmlFor="end">End Date</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="end"
+                        minLength="2"
+                        required
+                        onChange={this.onChange}
+                        value={inputDate(date.end.seconds)}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-3 form-group">
+                      <label htmlFor="tuition">Tuition</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="tuition"
+                        onChange={this.onChange}
+                        value={this.state.tuition}
+                        required
+                      />
+                    </div>
+                    <div className="col-md-3 form-group">
+                      <label htmlFor="materialsFee">Materials Fee</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="materialsFee"
+                        onChange={this.onChange}
+                        value={this.state.materialsFee}
+                        required
+                      />
+                    </div>
+                    <div className="col-md-3 form-group">
+                      <label htmlFor="tuitionFirst">Tution First Pay</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="tuitionFirst"
+                        onChange={this.onChange}
+                        value={this.state.tuitionFirst}
+                        required
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <label htmlFor="appendCourse"></label>
+                      <input
+                        type="button"
+                        value="Add more course"
+                        className="btn btn-secondary btn-block mt-2"
+                        disabled
+                      />
+                    </div>
+                  </div>
+
+                  {/* <div className="row">
+                    <div className="col-md-6 form-group">
+                      <label htmlFor="courseName">Course</label>
                       <select
                         name="courseName"
                         className="form-control"
@@ -389,6 +502,7 @@ class AddStudent extends Component {
                         required
                         onChange={this.onChange}
                         value={this.state.start}
+                        disabled
                       />
                     </div>
 
@@ -448,7 +562,9 @@ class AddStudent extends Component {
                         disabled
                       />
                     </div>
-                  </div>
+                  </div> */}
+
+                  {/* Template file section */}
                   {/* <div className="row">
                     <div className="form-group col-md-6">
                       <label htmlFor="template">Offer Template</label>
@@ -468,7 +584,11 @@ class AddStudent extends Component {
                         type="button"
                         value="Save"
                         onClick={
-                          this.state.courseName ? this.onClick : this.alertUser
+                          this.state.firstName &&
+                          this.state.birthday &&
+                          this.state.passport
+                            ? this.onClickSave
+                            : this.alertUser
                         }
                         className="btn btn-info btn-block"
                       />
@@ -539,8 +659,8 @@ class AddStudent extends Component {
 
 AddStudent.propTypes = {
   firestore: PropTypes.object,
-  notify: PropTypes.object.isRequired,
-  notifyUser: PropTypes.func.isRequired,
+  // notify: PropTypes.object.isRequired,
+  // notifyUser: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -562,6 +682,6 @@ export default compose(
     courses: ordered.courses,
     course: ordered.course && ordered.course[0],
     date: ordered.calendar && ordered.calendar[0],
-    notify: notify,
+    // notify: notify,
   }))
 )(AddStudent);
