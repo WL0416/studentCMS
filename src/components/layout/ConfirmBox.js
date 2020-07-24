@@ -10,6 +10,7 @@ class ConfirmBox extends Component {
       message,
       onConfirm,
       id,
+      passport,
     } = this.props;
     return (
       <>
@@ -30,7 +31,11 @@ class ConfirmBox extends Component {
             <p>{message}</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button name={id} variant="danger" onClick={onConfirm}>
+            <Button
+              name={`${id}/${passport}`}
+              variant="danger"
+              onClick={onConfirm}
+            >
               Delete
             </Button>
           </Modal.Footer>

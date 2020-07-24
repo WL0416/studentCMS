@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { firestoreConnect } from "react-redux-firebase";
+import { firebaseConnect, firestoreConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -12,7 +12,7 @@ class AppNavBar extends Component {
     searchWith: "sid",
     showSearchBox: false,
     searchContent: "",
-    searchResults: "",
+    searchResult: [],
   };
 
   // this is the new way the update the state from the props,
@@ -28,12 +28,35 @@ class AppNavBar extends Component {
   }
 
   setSearchShow = () => {
-    const { searchContent } = this.state;
-    const { firestore } = this.props;
+    const { searchContent, searchWith } = this.state;
     if (searchContent != null) {
-      this.setState({
-        showSearchBox: !this.state.showSearchBox,
-      });
+      const { studentsIndex } = this.props;
+      if (studentsIndex) {
+        if (searchWith === "sid") {
+          const searchResult = studentsIndex.filter((student) => {
+            return student.sId.toLowerCase() === searchContent.toLowerCase();
+          });
+          this.setState({
+            searchResult,
+          });
+        } else {
+          const searchResult = studentsIndex.filter((student) => {
+            return (
+              student.firstName.toLowerCase() === searchContent.toLowerCase()
+            );
+          });
+          this.setState({
+            searchResult,
+          });
+        }
+      }
+      setTimeout(() => {
+        console.log("resource", studentsIndex);
+        console.log("result", this.state.searchResult);
+        this.setState({
+          showSearchBox: !this.state.showSearchBox,
+        });
+      }, 200);
     } else {
       alert("Please type in sid or name in the search bar");
     }
@@ -51,12 +74,7 @@ class AppNavBar extends Component {
   };
 
   render() {
-    const {
-      isAuthenticated,
-      searchWith,
-      showSearchBox,
-      searchResults,
-    } = this.state;
+    const { isAuthenticated, showSearchBox, searchResult } = this.state;
     const { auth } = this.props;
     const { allowRegistration } = this.props.settings;
 
@@ -100,8 +118,7 @@ class AppNavBar extends Component {
                 <SearchBox
                   showSearchBox={showSearchBox}
                   setSearchShow={this.setSearchShow}
-                  searchWith={searchWith}
-                  searchResults={searchResults}
+                  searchResult={searchResult}
                 />
                 <ul className="navbar-nav ml-auto">
                   <li className="nav-item">
@@ -151,12 +168,15 @@ AppNavBar.propTypes = {
   firebase: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   settings: PropTypes.object.isRequired,
+  studentsIndex: PropTypes.array.isRequired,
 };
 
 export default compose(
-  firestoreConnect(),
+  firebaseConnect(),
+  firestoreConnect((props) => [{ collection: "studentsIndex" }]),
   connect((state) => ({
     auth: state.firebase.auth,
     settings: state.settings,
+    studentsIndex: state.firestore.ordered.studentsIndex,
   }))
 )(AppNavBar);

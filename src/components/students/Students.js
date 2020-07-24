@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import Spinner from "../layout/Spinner";
-import { Col, Row, Card, Form, Button, Table } from "react-bootstrap";
+import { Col, Row, Card, Button, Table } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { inputDate, convertDate } from "../util/tools";
 import ConfirmBox from "../layout/ConfirmBox";
@@ -40,10 +40,19 @@ class Students extends Component {
     e.preventDefault();
     const { firestore } = this.props;
     const { cid, pid } = this.state;
+    const deleteRef = e.target.name.split("/");
     firestore.delete({
       collection: `courses/${cid}/calendar/${pid}/students`,
-      doc: e.target.name,
+      doc: deleteRef[0],
     });
+
+    setTimeout(() => {
+      firestore.delete({
+        collection: "studentsIndex",
+        doc: `${cid}${deleteRef[1]}`,
+      });
+    }, 500);
+
     this.setState(this.setConfirmShow());
   };
 
@@ -138,7 +147,7 @@ class Students extends Component {
                                 <Button
                                   variant="danger"
                                   size="sm"
-                                  name={student.id}
+                                  name={`${student.id}/${student.passport}`}
                                   onClick={this.onClickDelete}
                                 >
                                   <i className="fas fa-times"></i>
@@ -150,6 +159,7 @@ class Students extends Component {
                                 message="Are you sure to remove this student?"
                                 onConfirm={this.onConfirmDelete}
                                 id={student.id}
+                                passport={student.passport}
                               />
                             </td>
                           </tr>

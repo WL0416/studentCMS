@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
 import { Link } from "react-router-dom";
-import { inputDate, convertDate } from "../util/tools";
+import { inputDate } from "../util/tools";
 import Spinner from "../layout/Spinner";
 
 class EditStudent extends Component {
@@ -53,7 +53,7 @@ class EditStudent extends Component {
   };
 
   render() {
-    const { courses, course, date, student } = this.props;
+    const { courses, course, date } = this.props;
 
     if (courses != null && course != null && date != null) {
       return (
@@ -120,6 +120,7 @@ class EditStudent extends Component {
                         required
                         onChange={this.onChange}
                         value={this.state.passport}
+                        disabled
                       />
                     </div>
                   </div>

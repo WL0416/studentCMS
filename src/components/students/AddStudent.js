@@ -50,10 +50,8 @@ class AddStudent extends Component {
     e.preventDefault();
 
     // const { firestore } = this.props;
-    const { courses, course, date, firestore } = this.props;
-    const { code, cricos, duration, term } = Object.values(courses).filter(
-      (course) => course.name === this.state.courseName
-    )[0];
+    const { course, date, firestore } = this.props;
+    const { code, cricos, duration, term } = course;
     const { enrolFee, tuition, materialsFee, tuitionFirst } = this.state;
 
     const totalDue = (
@@ -144,6 +142,7 @@ class AddStudent extends Component {
       cid: course.id,
       pid: date.id,
       campus: this.state.campus,
+      indexId: course.id + this.state.passport,
     };
 
     firestore
@@ -153,8 +152,34 @@ class AddStudent extends Component {
       )
       .catch((err) => {
         alert(err);
-      })
-      .then(alert("Save successfully!"));
+      });
+
+    setTimeout(() => {
+      // student actual data
+      let studentIndex = this.props.students.filter((student) => {
+        return student.passport === this.state.passport;
+      })[0];
+
+      const indexRef = studentIndex.indexId;
+      studentIndex = {
+        index: studentIndex.id,
+        cid: studentIndex.cid,
+        pid: studentIndex.pid,
+        sId: studentIndex.sId,
+        firstName: studentIndex.firstName,
+        lastName: studentIndex.lastName,
+        course: this.state.courseName,
+      };
+
+      firestore
+        .collection("studentsIndex")
+        .doc(indexRef)
+        .set(studentIndex)
+        .catch((err) => {
+          alert(err);
+        })
+        .then(alert("successful"));
+    }, 500);
   };
 
   onSubmit = (e) => {
@@ -227,9 +252,9 @@ class AddStudent extends Component {
   }
 
   render() {
-    const { courses, course, date } = this.props;
+    const { course, date } = this.props;
 
-    if (courses != null && course != null && date != null) {
+    if (course != null && date != null) {
       return (
         <React.Fragment>
           <div className="row">
@@ -339,7 +364,6 @@ class AddStudent extends Component {
                         value={this.state.campus}
                         required
                       >
-                        <option value=""> -- Select an option -- </option>
                         <option key="Melbourne" value="Melbourne">
                           Melbourne
                         </option>
@@ -601,6 +625,7 @@ class AddStudent extends Component {
                           type="submit"
                           value="Generate Offer"
                           className="btn btn-success btn-block"
+                          disabled
                         />
                       ) : (
                         <input
@@ -665,7 +690,7 @@ AddStudent.propTypes = {
 
 export default compose(
   firestoreConnect((props) => [
-    { collection: "courses" },
+    { collection: "studentsIndex" },
     {
       collection: "courses",
       storeAs: "course",
@@ -677,11 +702,25 @@ export default compose(
       doc: props.match.params.cid,
       subcollections: [{ collection: "calendar" }],
     },
+    {
+      collection: "courses",
+      doc: props.match.params.cid,
+      storeAs: "students",
+      subcollections: [
+        {
+          collection: "calendar",
+          doc: props.match.params.pid,
+          subcollections: [{ collection: "students" }],
+        },
+      ],
+    },
   ]),
   connect(({ firestore: { ordered }, notify }) => ({
-    courses: ordered.courses,
+    // courses: ordered.courses,
     course: ordered.course && ordered.course[0],
     date: ordered.calendar && ordered.calendar[0],
+    students: ordered.students,
+    studentsIndex: ordered.studentsIndex,
     // notify: notify,
   }))
 )(AddStudent);
