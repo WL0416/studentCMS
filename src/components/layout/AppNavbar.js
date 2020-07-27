@@ -168,7 +168,7 @@ AppNavBar.propTypes = {
   firebase: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   settings: PropTypes.object.isRequired,
-  studentsIndex: PropTypes.array.isRequired,
+  studentsIndex: PropTypes.array,
 };
 
 export default compose(

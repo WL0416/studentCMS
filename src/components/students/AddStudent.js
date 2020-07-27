@@ -22,7 +22,7 @@ class AddStudent extends Component {
     phone: "",
     email: "",
     address: "",
-    enrolFee: "",
+    enrolFee: 0,
     issueDate: "",
     courseName: "",
     code: "",
@@ -31,19 +31,18 @@ class AddStudent extends Component {
     end: "",
     duration: "",
     term: "",
-    tuition: "",
-    materialsFee: "",
-    totalFee: "",
-    balance: "",
-    campus: "",
-    campusAddress: "",
+    tuition: 0,
+    materialsFee: 0,
+    totalFee: 0,
+    balance: 0,
+    campus: "Melbourne",
+    campusAddress: "Level 10, 190 Queen St., Melbourne, VIC 3000",
     officerName: "",
-    tuitionFirst: "",
-    totalDue: "",
+    tuitionFirst: 0,
+    totalDue: 0,
     template: "",
     isEnrolled: "NotEnrol",
     isSaved: false,
-    isGenerated: false,
   };
 
   onClickSave = (e) => {
@@ -82,14 +81,11 @@ class AddStudent extends Component {
       period3 = "0.00";
       period4 = "0.00";
     } else {
-      const eachTermFee = (parseFloat(tuition) / 4).toFixed(2);
+      const eachTermFee = tuition / 4;
 
       period2 = eachTermFee;
       period3 = eachTermFee;
-      period4 = (
-        parseFloat(tuition) -
-        (eachTermFee * 2 + tuitionFirst)
-      ).toFixed(2);
+      period4 = (tuition - (eachTermFee * 2 + tuitionFirst)).toFixed(2);
     }
 
     let issueDate = new Date();
@@ -186,7 +182,7 @@ class AddStudent extends Component {
     e.preventDefault();
 
     axios
-      .post(`http://localhost:3000/offerGenerate`, this.state)
+      .post(`http://localhost:8888/offerGenerate`, this.state)
       .then((response) => {
         console.log(
           response.headers,
@@ -196,31 +192,10 @@ class AddStudent extends Component {
           response.config,
           response.request
         );
-        this.setState({
-          ...this.state,
-          isGenerated: true,
-        });
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
 
-  onDownload = (e) => {
-    e.preventDefault();
-
-    axios
-      .get("http://localhost:3000/offerGenerate")
-      .then((response) => {
-        console.log(
-          response.headers,
-          Object.keys(response),
-          response.status,
-          response.statusText,
-          response.config,
-          response.request
-        );
-        download(response.data, "test.xlsx");
+        let file_name = response.data.split("\\");
+        file_name = file_name[file_name.length - 1];
+        window.open(`http://127.0.0.1:8888/${file_name}`);
       })
       .catch((error) => {
         alert(error);
@@ -603,7 +578,7 @@ class AddStudent extends Component {
                   </div> */}
                   <br />
                   <div className="row">
-                    <div className="col-md-4">
+                    <div className="col-md-4 offset-2">
                       <input
                         type="button"
                         value="Save"
@@ -623,48 +598,19 @@ class AddStudent extends Component {
                       {this.state.isSaved ? (
                         <input
                           type="submit"
-                          value="Generate Offer"
+                          value="Generate Offer & Download"
                           className="btn btn-success btn-block"
-                          disabled
                         />
                       ) : (
                         <input
                           type="submit"
-                          value="Generate Offer"
+                          value="Generate Offer & Download"
                           className="btn btn-secondary btn-block"
                           disabled
-                        />
-                      )}
-                    </div>
-
-                    <div className="col-md-4">
-                      {" "}
-                      {this.state.isGenerated ? (
-                        <input
-                          type="button"
-                          value="Download"
-                          className="btn btn-primary btn-block"
-                          onClick={this.onDownload}
-                        />
-                      ) : (
-                        <input
-                          type="button"
-                          value="Download"
-                          className="btn btn-secondary btn-block"
-                          disabled
-                          onClick={this.onDownload}
                         />
                       )}
                     </div>
                   </div>
-
-                  {/* <a
-                    href="http://127.0.0.1:8887/output.docx"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Click me
-                  </a> */}
 
                   <br />
                   {/* {message ? (
