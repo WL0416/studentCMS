@@ -7,10 +7,11 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 // import { notifyUser } from "../../actions/notifyActions";
 // import Alert from "../layout/Alert";
-import download from "js-file-download";
 import axios from "axios";
 import Spinner from "../layout/Spinner";
 import { inputDate, convertDate } from "../util/tools";
+import LoadingBox from "../layout/LoadingBox";
+import MessageBox from "../layout/MessageBox";
 
 class AddStudent extends Component {
   state = {
@@ -43,6 +44,22 @@ class AddStudent extends Component {
     template: "",
     isEnrolled: "NotEnrol",
     isSaved: false,
+    isLoading: false,
+    isShow: false,
+  };
+
+  setLoading = () => {
+    const { isLoading } = this.state;
+    this.setState({
+      isLoading: !isLoading,
+    });
+  };
+
+  setShow = () => {
+    const { isShow } = this.state;
+    this.setState({
+      isShow: !isShow,
+    });
   };
 
   onClickSave = (e) => {
@@ -174,28 +191,20 @@ class AddStudent extends Component {
         .catch((err) => {
           alert(err);
         })
-        .then(alert("successful"));
+        .then(this.setShow());
     }, 500);
   };
 
   onSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post(`http://localhost:8888/offerGenerate`, this.state)
-      .then((response) => {
-        console.log(
-          response.headers,
-          Object.keys(response),
-          response.status,
-          response.statusText,
-          response.config,
-          response.request
-        );
+    this.setLoading();
 
-        let file_name = response.data.split("\\");
-        file_name = file_name[file_name.length - 1];
-        window.open(`http://127.0.0.1:8888/${file_name}`);
+    axios
+      .post(`https://csmserver.ts.r.appspot.com/offerGenerate`, this.state)
+      .then((response) => {
+        this.setLoading("Generating Offer...");
+        window.open(response.data);
       })
       .catch((error) => {
         alert(error);
@@ -207,7 +216,7 @@ class AddStudent extends Component {
   };
 
   alertUser = () => {
-    alert("Please tpye in student's name, birthday and passport number.");
+    alert("Please type in student's name, birthday and passport number.");
     // notifyUser(
     //   "Please tpye in student's name, birthday and passport number.",
     //   "error"
@@ -228,10 +237,21 @@ class AddStudent extends Component {
 
   render() {
     const { course, date } = this.props;
+    const { isLoading, isShow } = this.state;
 
     if (course != null && date != null) {
       return (
         <React.Fragment>
+          <LoadingBox
+            isLoading={isLoading}
+            setLoading={this.setLoading}
+            message="Generating Offer..."
+          />
+          <MessageBox
+            isShow={isShow}
+            setShow={this.setShow}
+            message={"Save Successfully!"}
+          />
           <div className="row">
             <div className="col-md-9">
               <h2>

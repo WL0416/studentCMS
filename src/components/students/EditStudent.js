@@ -9,6 +9,7 @@ import Spinner from "../layout/Spinner";
 
 class EditStudent extends Component {
   state = {
+    id: "",
     sId: "",
     firstName: "",
     lastName: "",
@@ -28,7 +29,7 @@ class EditStudent extends Component {
 
   componentDidUpdate() {
     const { student } = this.props;
-    if (student != null && this.state.sId !== student.sId) {
+    if (student != null && this.state.id !== student.id) {
       this.setState({
         ...student,
       });
