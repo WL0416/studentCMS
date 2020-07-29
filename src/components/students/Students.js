@@ -16,6 +16,8 @@ class Students extends Component {
     cid: "",
     pid: "",
     showConfirmBox: false,
+    currentId: "",
+    currentPassport: "",
   };
 
   componentDidUpdate() {
@@ -58,12 +60,25 @@ class Students extends Component {
 
   onClickDelete = (e) => {
     e.preventDefault();
+    const deleteRef = e.target.name.split("/");
+    this.setState({
+      currentId: deleteRef[0],
+      currentPassport: deleteRef[1],
+    });
     this.setConfirmShow();
   };
 
   render() {
     const { students } = this.props;
-    const { cid, pid, name, start, showConfirmBox } = this.state;
+    const {
+      cid,
+      pid,
+      name,
+      start,
+      showConfirmBox,
+      currentId,
+      currentPassport,
+    } = this.state;
     if (students) {
       return (
         <>
@@ -153,14 +168,6 @@ class Students extends Component {
                                   <i className="fas fa-times"></i>
                                 </Button>
                               </OverlayTrigger>
-                              <ConfirmBox
-                                showConfirmBox={showConfirmBox}
-                                setConfirmShow={this.setConfirmShow}
-                                message="Are you sure to remove this student?"
-                                onConfirm={this.onConfirmDelete}
-                                id={student.id}
-                                passport={student.passport}
-                              />
                             </td>
                           </tr>
                         ))}
@@ -176,6 +183,14 @@ class Students extends Component {
               <Sidebar isStudent={true} cid={cid} pid={pid} />
             </Col>
           </Row>
+          <ConfirmBox
+            showConfirmBox={showConfirmBox}
+            setConfirmShow={this.setConfirmShow}
+            message="Are you sure to remove this student?"
+            onConfirm={this.onConfirmDelete}
+            id={currentId}
+            passport={currentPassport}
+          />
         </>
       );
     } else {
